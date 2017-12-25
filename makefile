@@ -61,13 +61,17 @@ OBJ := $(OBJ:%=build/%.o)
 #   use the $ operator (if my memory serves).
 VORN_NN := 1 2 3 4 5
 
+# This will do nothing, only if the build succeeds.
 .PHONY : all
-all : | test ;
+all : | validate ;
 
 # This is vorn.exe. COPY/B your scripts to it.
 deploy/vorn.exe : $(OBJ) build/vorn_$(lastword $(VORN_NN))_size.o | deploy ; $(call LINK,$@,$^)
 
-# This is a test.exe. It will COPY/B 'test.lua' to it (compiled).
+# This is a test.exe. Make will COPY/B 'test.lua' to it (compiled). We
+#   don't use this anymore. To validate the EXE_SIZE, we run the
+#   'validate' goal instead. To make this work on AppVeyor, we'd have
+#   to run something like `choco install lua` first.
 build/test.exe : deploy/vorn.exe build/test.luac ; $(call COPYB,$@,$^)
 build/test.luac : src/test.lua ; luac -o $@ $<
 
@@ -82,11 +86,13 @@ build/%.o : src/%.cpp | build ; $(call COMPILE,$@,$^)
 
 build deploy : ; $(call MAKE_DIR,$@)
 
-.PHONY : run test clean reset
+.PHONY : validate clean reset
 
-run : build/test.exe ; @$<
+validate : deploy/vorn.exe ; python src/validate_exe_size.py $<
 
-test : build/test.exe deploy/vorn.exe build/test.luac ; python src/subtract_sizes.py $^
+# run : build/test.exe ; @$<
+
+# test : build/test.exe deploy/vorn.exe build/test.luac ; python src/subtract_sizes.py $^
 
 clean : ; $(call REMOVE_DIR,build)
 reset : | clean ; $(call REMOVE_DIR,deploy)
