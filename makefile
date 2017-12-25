@@ -61,6 +61,9 @@ OBJ := $(OBJ:%=build/%.o)
 #   use the $ operator (if my memory serves).
 VORN_NN := 1 2 3 4 5
 
+.PHONY : all
+all : | test ;
+
 # This is vorn.exe. COPY/B your scripts to it.
 deploy/vorn.exe : $(OBJ) build/vorn_$(lastword $(VORN_NN))_size.o | deploy ; $(call LINK,$@,$^)
 
