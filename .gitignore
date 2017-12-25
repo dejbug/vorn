@@ -1,0 +1,4 @@
+*.exe
+*.o
+*.luac
+/*patched_size.cpp
