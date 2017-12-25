@@ -86,13 +86,13 @@ build/%.o : src/%.cpp | build ; $(call COMPILE,$@,$^)
 
 build deploy : ; $(call MAKE_DIR,$@)
 
-.PHONY : validate clean reset
+.PHONY : validate run test clean reset
 
 validate : deploy/vorn.exe ; python src/validate_exe_size.py $<
 
-# run : build/test.exe ; @$<
+run : build/test.exe ; @$<
 
-# test : build/test.exe deploy/vorn.exe build/test.luac ; python src/subtract_sizes.py $^
+test : build/test.exe deploy/vorn.exe build/test.luac ; python src/subtract_sizes.py $^
 
 clean : ; $(call REMOVE_DIR,build)
 reset : | clean ; $(call REMOVE_DIR,deploy)
