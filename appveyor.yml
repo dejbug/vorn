@@ -15,7 +15,7 @@ before_build:
   - cmd: mingw32-make --version | head -1
   - cmd: g++ --version | head -1
   - cmd: 7z --help | head -3
-  - cmd: luac -v
+  # - cmd: luac -v
 
 build_script:
   - cmd: mingw32-make -j1 --keep-going
