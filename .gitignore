@@ -1,4 +1,5 @@
 *.exe
 *.o
+*.pyc
 *.luac
 /vorn_*_size.cpp

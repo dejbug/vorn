@@ -9,7 +9,7 @@ class OverwriteError(Error): pass
 
 ENDL = "\r\n"
 
-def get_exe_size(path):
+def query_exe_size(path):
 	try:
 		size = subprocess.call([path, "--exe-size"], stdout=subprocess.PIPE)
 	except WindowsError as e:
@@ -34,20 +34,30 @@ def print_usage():
 	print "  `%s main`" % app_name
 	print "  -- same as: `%s main.exe main_size.cpp`" % app_name
 
+def main_1(root_name):
+	exe_path = root_name + ".exe"
+	cpp_path = root_name + "_size.cpp"
+	exe_file_size = query_exe_size(exe_path)
+	write_cpp_file(cpp_path, exe_file_size)
+	return 0
+
+def main_2(exe_path, cpp_path):
+	exe_file_size = query_exe_size(exe_path)
+	write_cpp_file(cpp_path, exe_file_size)
+	return 0
+
 if "__main__" == __name__:
+
 	if len(sys.argv) > 2:
 		exe_path = sys.argv[1]
 		cpp_path = sys.argv[2]
-		exe_file_size = get_exe_size(exe_path)
-		write_cpp_file(cpp_path, exe_file_size)
-		exit(0)
+		code = main_2(exe_path, cpp_path)
+		exit(code)
 
 	elif len(sys.argv) > 1:
 		root_name = os.path.splitext(sys.argv[1])[0]
-		exe_path = root_name + ".exe"
-		cpp_path = root_name + "_size.cpp"
-		exe_file_size = get_exe_size(exe_path)
-		write_cpp_file(cpp_path, exe_file_size)
+		code = main_1(root_name)
+		exit(code)
 
 	elif len(sys.argv) < 2:
 		print_usage()
