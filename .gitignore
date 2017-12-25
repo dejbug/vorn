@@ -1,4 +1,4 @@
 *.exe
 *.o
 *.luac
-/*patched_size.cpp
+/vorn_*_size.cpp

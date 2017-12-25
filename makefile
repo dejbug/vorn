@@ -3,13 +3,13 @@ CXX := g++
 CMP := $(CXX) $(CXXFLAGS)
 
 app.exe : vorn.exe app.luac ; COPY /B vorn.exe+app.luac $@
-vorn.exe : main.o fileutils.o textutils.o vorn_patched_size.o ; $(CMP) -o $@ $^
+vorn.exe : main.o fileutils.o textutils.o vorn_2_size.o ; $(CMP) -o $@ $^
 
-vorn_patched_size.cpp : vorn_patched.exe ; @python exe_size_patcher.py $< $@
-vorn_patched.exe : main.o fileutils.o textutils.o vorn_unpatched_size.o ; $(CMP) -o $@ $^
+vorn_2_size.cpp : vorn_2.exe ; @python exe_size_patcher.py $< $@
+vorn_2.exe : main.o fileutils.o textutils.o vorn_1_size.o ; $(CMP) -o $@ $^
 
-vorn_unpatched_size.cpp : vorn_unpatched.exe ; @python exe_size_patcher.py $< $@
-vorn_unpatched.exe : main.o fileutils.o textutils.o vorn_preliminary_size.o ; $(CMP) -o $@ $^
+vorn_1_size.cpp : vorn_1.exe ; @python exe_size_patcher.py $< $@
+vorn_1.exe : main.o fileutils.o textutils.o vorn_preliminary_size.o ; $(CMP) -o $@ $^
 
 vorn_%_size.o : vorn_%_size.cpp ; $(CMP) -o $@ -c $<
 %utils.o : %utils.cpp %utils.hpp ; $(CMP) -o $@ -c $<

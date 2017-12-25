@@ -1,11 +1,6 @@
 import os
 
-paths = [
-	r'c:\Projects_3\vorn\vorn_unpatched.exe',
-	r'c:\Projects_3\vorn\vorn_patched.exe',
-	r'c:\Projects_3\vorn\vorn.exe',
-	r'c:\Projects_3\vorn\app.exe',
-]
+paths = [p for p in os.listdir(".") if p.lower().endswith(".exe")]
 
 size_paths = []
 for path in paths:
