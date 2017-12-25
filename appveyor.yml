@@ -7,9 +7,9 @@ max_jobs: 1
 install:
   - cmd: SET MINGW_DIR=C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1
   - cmd: SET PATH=%MINGW_DIR%\mingw32\bin;%PATH%
-  - cmd: choco install lua
-  - cmd: SET LUA_DIR=C:\Program Files (x86)\Lua\5.1
-  - cmd: SET PATH=%LUA_DIR%;%PATH%
+  # - cmd: choco install lua
+  # - cmd: SET LUA_DIR=C:\Program Files (x86)\Lua\5.1
+  # - cmd: SET PATH=%LUA_DIR%;%PATH%
 
 before_build:
   - cmd: mingw32-make --version | head -1

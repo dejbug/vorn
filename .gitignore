@@ -2,4 +2,4 @@
 *.o
 *.pyc
 *.luac
-/vorn_*_size.cpp
+/build/vorn_*_size.cpp

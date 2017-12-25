@@ -71,7 +71,7 @@ deploy/vorn.exe : $(OBJ) build/vorn_$(lastword $(VORN_NN))_size.o | deploy ; $(c
 # This is a test.exe. Make will COPY/B 'test.lua' to it (compiled). We
 #   don't use this anymore. To validate the EXE_SIZE, we run the
 #   'validate' goal instead. To make this work on AppVeyor, we'd have
-#   to run something like `choco install lua` first.
+#   to run `choco install lua` etc. (see our `appveyor.yml`).
 build/test.exe : deploy/vorn.exe build/test.luac ; $(call COPYB,$@,$^)
 build/test.luac : src/test.lua ; luac -o $@ $<
 
