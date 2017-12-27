@@ -56,8 +56,8 @@ endef
 # $1 : src/test.lua
 # $2 : build/test.luac
 define LUA_TO_LUAC
-luac -o $@ $<
-luac -l -l $@
+$(call WINPATH,extern/lua/luac.exe) -o $@ $<
+$(call WINPATH,extern/lua/luac.exe) -l -l $@
 endef
 
 LUA_VERSION := 5.3.4
@@ -119,7 +119,7 @@ all : | validate ;
 #   to run `choco install lua` etc. (see our `appveyor.yml`).
 build/test.exe : deploy/vorn.exe build/test.luac ; $(call BAKE_TO_APP,$^,$@)
 
-build/test.luac : src/test.lua ; $(call LUA_TO_LUAC,$<,$@)
+build/test.luac : src/test.lua | extern/lua/luac.exe ; $(call LUA_TO_LUAC,$<,$@)
 
 # This is vorn.exe. COPY/B your scripts to it.
 deploy/vorn.exe : $(LUAINCS) $(OBJ) build/vorn_$(lastword $(VORN_NN))_size.o | deploy ; $(call LINK,$@,$^)
@@ -133,13 +133,15 @@ build/vorn_%_size.o : build/vorn_%_size.cpp | build ; $(call COMPILE,$@,$^)
 build/%utils.o : src/%utils.cpp src/%utils.hpp | build ; $(call COMPILE,$@,$^)
 build/%.o : src/%.cpp | build ; $(call COMPILE,$@,$^)
 
+extern/lua/luac.exe : extern/lua-$(LUA_VERSION)/src/luac.exe | extern/lua-$(LUA_VERSION)/src/liblua.a ; $(call COPY_FILE,$<,$@)
+
 extern/lua/include/% : extern/lua-$(LUA_VERSION)/Makefile | extern/lua/include ; $(call COPY_FILE,extern/lua-$(LUA_VERSION)/src/$(notdir $@),$@)
 
 extern/lua/liblua.a : extern/lua-$(LUA_VERSION)/src/liblua.a | extern/lua
 	$(call COPY_FILE,$<,$@)
 	$(call TOUCH,$@)
 
-extern/lua-$(LUA_VERSION)/src/liblua.a : extern/lua-$(LUA_VERSION)/Makefile ; make mingw -C $(dir $<)
+extern/lua-$(LUA_VERSION)/src/liblua.a : extern/lua-$(LUA_VERSION)/Makefile ; $(MAKE) mingw -C $(dir $<)
 
 extern/lua-$(LUA_VERSION)/Makefile : extern/lua-$(LUA_VERSION).tar ; $(call UNPACK,extern,$<)
 
