@@ -23,6 +23,7 @@ struct Lua {
 
 	std::string get_last_error(bool pop=true) const;
 	bool run(std::string & text, char const * name=nullptr) const;
+	bool run(char const * text) const;
 };
 
 } // !namespace luautils

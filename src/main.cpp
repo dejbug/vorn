@@ -48,15 +48,13 @@ int test_lua_repl() {
 	luautils::Lua lua;
 
 	char buff[256];
-	int error;
 
-	while (fgets(buff, sizeof(buff), stdin) != NULL) {
-		error = luaL_loadstring(lua, buff) || lua_pcall(lua, 0, 0, 0);
-		if (error) {
-			fprintf(stderr, "%s\n", lua_tostring(lua, -1));
-			lua_pop(lua, 1); /* pop error message from the stack */
-		}
+	while (1) {
+		printf("lua> ");
+		if (nullptr == fgets(buff, sizeof(buff), stdin)) break;
+		if (!lua.run(buff)) fprintf(stderr, "! %s\n", lua.get_last_error().c_str());
 	}
+	printf("bye.\n");
 	return 0;
 }
 

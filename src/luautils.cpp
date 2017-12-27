@@ -27,3 +27,9 @@ bool luautils::Lua::run(std::string & text, char const * name) const {
 		return false;
 	return true;
 }
+
+bool luautils::Lua::run(char const * text) const {
+	if (luaL_loadstring(handle, text)) return false;
+	if (lua_pcall(handle, 0, 0, 0)) return false;
+	return true;
+}

@@ -25,33 +25,41 @@ The bottom-line idea is to have user design her own one-size-fits-all library th
 
 ## <a name="Example">Example
 
-1. Download the latest release (e.g. `vorn-3.7z`).
+1. Download the latest release (e.g. `vorn-7.7z`).
 2. Unpack somewhere (*sweet irony*!). You now have `vorn.exe`.
 3. Choose some `test.lua` and run `luac test.lua`. You now have `luac.out`.
 4. Run `COPY /B vorn.exe+luac.out > app.exe`. You now have `app.exe`.
-5. Run `app.exe`. Enjoy (for now) the hex dump of the attached `luac.out`.
+5. Run `app.exe`. Enjoy.
 
 --
 
 	> md vorn
 	> cd vorn
-	> wget https://github.com/dejbug/vorn/releases/vorn-3.7z              (1)
-	> 7z x vorn-3.7z                                                      (2)
-	> edit test.lua
+	> curl -kLO http://github.com/dejbug/vorn/releases/download/vorn-7/vorn-7.7z    (1)
+	> 7z x vorn-7.7z 1>NUL                                                          (2)
+	> echo print('Hello World!') > app.lua
+	> type app.lua
 
 ```lua
--- test.lua
-print("Hello World")
+print('Hello World!')
 ```
 
-	> luac test.lua                                                       (3)
-	> copy /B vorn.exe+luac.out > app.exe                                 (4)
-	> app.exe                                                             (5)
-	 00000000 | 1B 4C 75 61 : 51 00 01 04 : 04 04 08 00 : 0E 00 00 00 |
-	 00000010 | 40 73 72 63 : 2F 74 65 73 : 74 2E 6C 75 : 61 00 00 00 |
-	 00000020 | 00 00 00 00 : 00 00 00 00 : 02 02 04 00 : 00 00 05 00 |
-	 00000030 | 00 00 41 40 : 00 00 1C 40 : 00 01 1E 00 : 80 00 02 00 |
-	 00000040 | 00 00 04 06 : 00 00 00 70 : 72 69 6E 74 : 00 04 0C 00 |
-	 00000050 | 00 00 48 65 : 6C 6C 6F 20 : 57 6F 72 6C : 64 00 00 00 |
-	 00000060 | 00 00 04 00 : 00 00 01 00 : 00 00 01 00 : 00 00 01 00 |
-	 00000070 | 00 00 01 00 : 00 00 00 00 : 00 00 00 00 : 00 00       |
+	> luac app.lua                                                                 (3)
+	> copy /B vorn.exe+luac.out app.exe                                            (4)
+	...
+	> app.exe                                                                      (5)
+	Hello World!
+	> app.exe --test-lua-repl
+	lua> print "hi"
+	hi
+	lua> os.exit()
+	> app.exe --dump-payload
+	 00000000 | 1B 4C 75 61 : 53 00 19 93 : 0D 0A 1A 0A : 04 04 04 08 |
+	 00000010 | 08 78 56 00 : 00 00 00 00 : 00 00 00 00 : 00 00 28 77 |
+	 00000020 | 40 01 09 40 : 61 70 70 2E : 6C 75 61 00 : 00 00 00 00 |
+	 00000030 | 00 00 00 00 : 01 02 04 00 : 00 00 06 00 : 40 00 41 40 |
+	 00000040 | 00 00 24 40 : 00 01 26 00 : 80 00 02 00 : 00 00 04 06 |
+	 00000050 | 70 72 69 6E : 74 04 0D 48 : 65 6C 6C 6F : 20 57 6F 72 |
+	 00000060 | 6C 64 21 01 : 00 00 00 01 : 00 00 00 00 : 00 04 00 00 |
+	 00000070 | 00 01 00 00 : 00 01 00 00 : 00 01 00 00 : 00 01 00 00 |
+	 00000080 | 00 00 00 00 : 00 01 00 00 : 00 05 5F 45 : 4E 56       |
