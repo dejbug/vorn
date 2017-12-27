@@ -2,4 +2,6 @@
 *.o
 *.pyc
 *.luac
-/build/vorn_*_size.cpp
+/build
+/deploy
+/extern

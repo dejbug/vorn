@@ -3,19 +3,25 @@ import re
 import subprocess
 import sys
 
+from vornlib import OPT_QUERY_EXE_SIZE
+from vornlib import Error as ErrorBase
+
 class Error(Exception): pass
 class FileNotFoundError(Error): pass
+class ExeError(Error): pass
 class ParseError(Error): pass
 
 ParsedOutput = collections.namedtuple("ParsedOutput", "exe_name exe_size ok_blurb")
 
 def get_exe_output(path):
 	try:
-		size = subprocess.call([path, "--exe-size"], stdout=subprocess.PIPE)
-		stdout = subprocess.Popen([path, "--exe-size"], shell=False, stdout=subprocess.PIPE).stdout
+		size = subprocess.call([path, OPT_QUERY_EXE_SIZE], stdout=subprocess.PIPE)
+		stdout = subprocess.Popen([path, OPT_QUERY_EXE_SIZE], shell=False, stdout=subprocess.PIPE).stdout
 	except WindowsError as e:
 		if e.winerror == 2:
 			raise FileNotFoundError('exe not found at "%s"' % path)
+		elif e.winerror == 193:
+			raise ExeError('not an executable at "%s"' % path)
 		else: raise
 	else:
 		return stdout.read()

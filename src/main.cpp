@@ -3,6 +3,7 @@
 
 #include "fileutils.hpp"
 #include "textutils.hpp"
+#include "luautils.hpp"
 
 #define E_OK 0
 #define E_UNPATCHED_EXE -1
@@ -24,16 +25,50 @@ size_t print_exe_size(char ** argv) {
 	return exe_size;
 }
 
-int run_payload(int, char ** argv) {
+int dump_payload(int, char ** argv) {
 	fileutils::FileHandle fh(argv[0]);
 	std::string text = fileutils::read_tail(fh, EXE_SIZE);
 	textutils::print_hex(text);
 	return E_OK;
 }
 
+int run_payload(int, char ** argv) {
+	luautils::Lua lua;
+
+	fileutils::FileHandle fh(argv[0]);
+	std::string text = fileutils::read_tail(fh, EXE_SIZE);
+
+	if (!lua.run(text, "payload"))
+		fprintf(stderr, "[lua error] %s\n", lua.get_last_error().c_str());
+
+	return E_OK;
+}
+
+int test_lua_repl() {
+	luautils::Lua lua;
+
+	char buff[256];
+	int error;
+
+	while (fgets(buff, sizeof(buff), stdin) != NULL) {
+		error = luaL_loadstring(lua, buff) || lua_pcall(lua, 0, 0, 0);
+		if (error) {
+			fprintf(stderr, "%s\n", lua_tostring(lua, -1));
+			lua_pop(lua, 1); /* pop error message from the stack */
+		}
+	}
+	return 0;
+}
+
 int main(int argc, char ** argv) {
 	if (argc > 1 && !strcmp(argv[1], "--exe-size")) {
 		return print_exe_size(argv);
+	}
+	else if (argc > 1 && !strcmp(argv[1], "--test-lua-repl")) {
+		return test_lua_repl();
+	}
+	else if (argc > 1 && !strcmp(argv[1], "--dump-payload")) {
+		return dump_payload(argc, argv);
 	}
 	else if (0 == EXE_SIZE) {
 		return E_UNPATCHED_EXE;
